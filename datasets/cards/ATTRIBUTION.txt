@@ -1,0 +1,4 @@
+Downloaded from https://mtgjson.com/api/v5/StandardAtomic.json.zip
+The data was distributed via the MIT license: https://mtgjson.com/license/
+The data was then processed through the following command to make it easier to download, parse and serve:
+`cat StandardAtomic.json | jq -c '.data | values | [.[][0] | del(.rulings, .purchaseUrls, .legalities, .foreignData, .printings, .identifiers, .edhrecRank, .edhrecSaltiness)]' > StandardAtomicSimplified.json`
