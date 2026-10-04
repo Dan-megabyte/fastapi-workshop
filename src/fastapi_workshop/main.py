@@ -10,7 +10,8 @@ from starlette.responses import FileResponse
 from fastapi_workshop.card_data_helper import Card, cards, cards_dict
 
 description = """
-This is the list of fucntions that we will be showing off. It uses markdown to render the text so anything you can do in markdown you can do here.
+This is the list of fucntions that we will be showing off.
+It uses markdown to render the text so anything you can do in markdown you can do here.
 
 ## Treasure
 * **Lay Treasure** (_not immplemented_)
@@ -68,7 +69,10 @@ times_found: int = 0
 
 @app.post("/search-for-treasure", response_model_exclude_none=True)
 def search_for_treasure(x: int, y: int) -> TreasureResult:
-    """Do a search for treasure. A more complicated code, using python logic. Takes in two parameters, x & y, and tells you how far away you were."""
+    """
+    Do a search for treasure. A more complicated code, using python logic.
+    Takes in two parameters, x & y, and tells you how far away you were.
+    """
     given_location = (x, y)
     if (x, y) == SECRET_LOCATION:
         global times_found
@@ -80,7 +84,11 @@ def search_for_treasure(x: int, y: int) -> TreasureResult:
 
 @app.get("/all-cards")
 def get_all_cards() -> list[Card]:
-    """Gets all the cards from the database. Very slow and laggy because there is ~3mb of card data."""
+    """
+    Gets all the cards from the database.
+
+    Very slow and laggy because there is ~3mb of card data.
+    """
     return cards
 
 
@@ -111,7 +119,8 @@ def upload_file(file: UploadFile) -> UploadFileResponse:
         with open(f"db/files/{hash}", "wb") as f:
             f.write(file.file.read())
 
-    # Either way, we should return a response with the file's content type and the files name for debugging purposes.
+    # Either way, we should return a response with the file's
+    # content type and the files name for debugging purposes.
     return UploadFileResponse(type=file.content_type, name=file.filename)
 
 
