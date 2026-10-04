@@ -29,14 +29,29 @@ It uses markdown to render the text so anything you can do in markdown you can d
 
 
 """
+tags_metadata = [
+    {
+        "name": "Treasure",
+        "description": "Operations to deal with the treasure hunt",
+    },
+    {
+        "name": "Cards",
+        "description": "Interacts with cards to do a varius of things with",
+    },
+    {
+        "name": "File",
+        "description": "Lets upload, download, and delete files",
+    },
+]
 
 app = FastAPI(
     title="FastAPI Workshop",
     description=description,
     summary="The fuctions that are being implemented or are already implemented",
     version="0.0.1",
+    openapi_tags=tags_metadata,
     terms_of_service="http://example.com/terms/",
-     license_info={
+    license_info={
         "name": "MIT License",
         "url": "https://opensource.org/license/mit",
     },
@@ -67,7 +82,7 @@ class TreasureResult(BaseModel):
 times_found: int = 0
 
 
-@app.post("/search-for-treasure", response_model_exclude_none=True)
+@app.post("/search-for-treasure", response_model_exclude_none=True, tags=["Treasure"])
 def search_for_treasure(x: int, y: int) -> TreasureResult:
     """
     Do a search for treasure. A more complicated code, using python logic.
@@ -82,7 +97,7 @@ def search_for_treasure(x: int, y: int) -> TreasureResult:
         return TreasureResult(distance_away=distance(given_location, SECRET_LOCATION))
 
 
-@app.get("/all-cards")
+@app.get("/all-cards", tags=["Cards"])
 def get_all_cards() -> list[Card]:
     """
     Gets all the cards from the database.
@@ -92,7 +107,7 @@ def get_all_cards() -> list[Card]:
     return cards
 
 
-@app.get("/card")
+@app.get("/card", tags=["Cards"])
 def get_card(card_name: str) -> Card:
     """Gets a single card from the card dictionary. Fast."""
     return cards_dict[card_name]
@@ -101,7 +116,7 @@ class UploadFileResponse(BaseModel):
     type: str | None
     filename: str
 
-@app.put("/file")
+@app.put("/file", tags=["File"])
 def upload_file(file: UploadFile, name: str | None = None) -> UploadFileResponse:
     """Uploads a file. If its a png, saves it to the local database."""
 
@@ -130,7 +145,7 @@ def upload_file(file: UploadFile, name: str | None = None) -> UploadFileResponse
     return UploadFileResponse(type=file.content_type, filename=name)
 
 
-@app.get("/file")
+@app.get("/file", tags=["File"])
 def download_file(filename: str) -> FileResponse:
     """Downloads a file. Requires a filename that has been uploaded previously."""
 
@@ -147,7 +162,7 @@ def download_file(filename: str) -> FileResponse:
     return FileResponse(path, filename=filename, content_disposition_type="inline")
 
 
-@app.delete("/file")
+@app.delete("/file", tags=["File"])
 def delete_file(filename: str) -> bool:
     """Deletes a file that was previously updated."""
 
