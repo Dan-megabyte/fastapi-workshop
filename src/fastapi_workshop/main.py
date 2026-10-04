@@ -3,7 +3,7 @@ import os
 from math import sqrt
 from pathlib import Path
 
-import pydantic
+from pydantic import BaseModel
 from fastapi import FastAPI, HTTPException, UploadFile
 from starlette.responses import FileResponse
 
@@ -25,7 +25,7 @@ def distance(loc_1: tuple[int, int], loc_2: tuple[int, int]) -> float:
 SECRET_LOCATION = (1, 5)
 
 
-class TreasureResult(pydantic.BaseModel):
+class TreasureResult(BaseModel):
     """The response from a search for treasure. Tells you how far away you were."""
 
     found: bool | None = None
@@ -35,7 +35,7 @@ class TreasureResult(pydantic.BaseModel):
 times_found: int = 0
 
 
-@app.get("/search-for-treasure", response_model_exclude_none=True)
+@app.post("/search-for-treasure", response_model_exclude_none=True)
 def search_for_treasure(x: int, y: int) -> TreasureResult:
     """Do a search for treasure. A more complicated code, using python logic. Takes in two parameters, x & y, and tells you how far away you were."""
     given_location = (x, y)
@@ -58,9 +58,12 @@ def get_card(card_name: str) -> Card:
     """Gets a single card from the card dictionary. Fast."""
     return cards_dict[card_name]
 
+class UploadFileResponse(BaseModel):
+    type: str | None
+    name: str | None
 
-@app.post("/upload-file")
-def upload_file(file: UploadFile):
+@app.put("/upload-file")
+def upload_file(file: UploadFile) -> UploadFileResponse:
     """Uploads a file. If its a png, saves it to the local database."""
 
     # Checks the MIME-type of the file to see if its a png. The file must be named.
@@ -78,7 +81,7 @@ def upload_file(file: UploadFile):
             f.write(file.file.read())
 
     # Either way, we should return a response with the file's content type and the files name for debugging purposes.
-    return {"type": file.content_type, "name": file.filename}
+    return UploadFileResponse(type=file.content_type, name=file.filename)
 
 
 @app.get("/download-file")
@@ -96,3 +99,21 @@ def download_file(filename: str) -> FileResponse:
         raise HTTPException(404, detail="That file does not exist.")
     # Otherwise, return the file asyncronously
     return FileResponse(path, filename=filename, content_disposition_type="inline")
+
+
+@app.delete("/delete-file")
+def delete_file(filename: str) -> bool:
+    """Deletes a file that was previously updated."""
+
+    # Hash the filename to retrieve the correct path
+    hash = hashlib.sha256(
+        filename.encode(errors="ignore"), usedforsecurity=False
+    ).hexdigest()
+    # Construct the path
+    path = Path(f"db/files/{hash}")
+    # If the file doesn't exist, return an error
+    if not path.exists():
+        raise HTTPException(404, detail="That file does not exist.")
+
+    os.remove(path)
+    return True
