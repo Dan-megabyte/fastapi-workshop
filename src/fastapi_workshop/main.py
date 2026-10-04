@@ -99,20 +99,26 @@ def get_card(card_name: str) -> Card:
 
 class UploadFileResponse(BaseModel):
     type: str | None
-    name: str | None
+    filename: str
 
-@app.put("/upload-file")
-def upload_file(file: UploadFile) -> UploadFileResponse:
+@app.put("/file")
+def upload_file(file: UploadFile, name: str | None = None) -> UploadFileResponse:
     """Uploads a file. If its a png, saves it to the local database."""
 
-    # Checks the MIME-type of the file to see if its a png. The file must be named.
-    if file.content_type == "image/png" and file.filename is not None:
+    assert file.size is not None
+
+    if name is None:
+        assert file.filename is not None
+        name = file.filename
+
+    # Checks the file size to see if it is larger than 0. The file must be named.
+    if file.size > 0:
         # Make sure that the database folders are available
         os.makedirs("db/files", exist_ok=True)
 
         # Hash the filename. This prevents attacks such as specifying the filename ../../main.py
         hash = hashlib.sha256(
-            file.filename.encode(errors="ignore"), usedforsecurity=False
+            name.encode(errors="ignore"), usedforsecurity=False
         ).hexdigest()
 
         # Writes the file to the database
@@ -121,10 +127,10 @@ def upload_file(file: UploadFile) -> UploadFileResponse:
 
     # Either way, we should return a response with the file's
     # content type and the files name for debugging purposes.
-    return UploadFileResponse(type=file.content_type, name=file.filename)
+    return UploadFileResponse(type=file.content_type, filename=name)
 
 
-@app.get("/download-file")
+@app.get("/file")
 def download_file(filename: str) -> FileResponse:
     """Downloads a file. Requires a filename that has been uploaded previously."""
 
@@ -141,7 +147,7 @@ def download_file(filename: str) -> FileResponse:
     return FileResponse(path, filename=filename, content_disposition_type="inline")
 
 
-@app.delete("/delete-file")
+@app.delete("/file")
 def delete_file(filename: str) -> bool:
     """Deletes a file that was previously updated."""
 
