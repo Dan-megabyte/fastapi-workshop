@@ -36,11 +36,11 @@ tags_metadata = [
     },
     {
         "name": "Cards",
-        "description": "Interacts with cards to do a varius of things with",
+        "description": "Interacts with cards to do a variety of things with",
     },
     {
         "name": "File",
-        "description": "Lets upload, download, and delete files",
+        "description": "Lets you upload, download, and delete files",
     },
 ]
 
@@ -55,7 +55,6 @@ app = FastAPI(
         "name": "MIT License",
         "url": "https://opensource.org/license/mit",
     },
-
 )
 
 
@@ -112,9 +111,11 @@ def get_card(card_name: str) -> Card:
     """Gets a single card from the card dictionary. Fast."""
     return cards_dict[card_name]
 
+
 class UploadFileResponse(BaseModel):
     type: str | None
     filename: str
+
 
 @app.put("/file", tags=["File"])
 def upload_file(file: UploadFile, name: str | None = None) -> UploadFileResponse:
