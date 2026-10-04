@@ -1,29 +1,43 @@
+import hashlib
+import os
 from math import sqrt
+from pathlib import Path
 
-from fastapi_workshop.card_data_helper import Card, cards
 import pydantic
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, UploadFile
+from starlette.responses import FileResponse
+
+from fastapi_workshop.card_data_helper import Card, cards, cards_dict
 
 app = FastAPI()
 
 
 @app.get("/")
 def hello_world() -> str:
-    return "Hello World"
+    """A hello world function, shows basic syntax for FastAPI"""
+    return "Hello World! This is the root of the app, served through the hello_world() function."
+
 
 def distance(loc_1: tuple[int, int], loc_2: tuple[int, int]) -> float:
-    return sqrt((loc_1[0]-loc_2[0])**2 + (loc_1[0]-loc_2[0])**2)
+    return sqrt((loc_1[0] - loc_2[0]) ** 2 + (loc_1[0] - loc_2[0]) ** 2)
+
 
 SECRET_LOCATION = (1, 5)
 
-times_found: int = 0
 
 class TreasureResult(pydantic.BaseModel):
+    """The response from a search for treasure. Tells you how far away you were."""
+
     found: bool | None = None
     distance_away: float | None = None
 
-@app.get("/search_for_treasure", response_model_exclude_none=True)
+
+times_found: int = 0
+
+
+@app.get("/search-for-treasure", response_model_exclude_none=True)
 def search_for_treasure(x: int, y: int) -> TreasureResult:
+    """Do a search for treasure. A more complicated code, using python logic. Takes in two parameters, x & y, and tells you how far away you were."""
     given_location = (x, y)
     if (x, y) == SECRET_LOCATION:
         global times_found
@@ -32,6 +46,53 @@ def search_for_treasure(x: int, y: int) -> TreasureResult:
     else:
         return TreasureResult(distance_away=distance(given_location, SECRET_LOCATION))
 
-@app.get("/all_cards")
+
+@app.get("/all-cards")
 def get_all_cards() -> list[Card]:
+    """Gets all the cards from the database. Very slow and laggy because there is ~3mb of card data."""
     return cards
+
+
+@app.get("/card")
+def get_card(card_name: str) -> Card:
+    """Gets a single card from the card dictionary. Fast."""
+    return cards_dict[card_name]
+
+
+@app.post("/upload-file")
+def upload_file(file: UploadFile):
+    """Uploads a file. If its a png, saves it to the local database."""
+
+    # Checks the MIME-type of the file to see if its a png. The file must be named.
+    if file.content_type == "image/png" and file.filename is not None:
+        # Make sure that the database folders are available
+        os.makedirs("db/files", exist_ok=True)
+
+        # Hash the filename. This prevents attacks such as specifying the filename ../../main.py
+        hash = hashlib.sha256(
+            file.filename.encode(errors="ignore"), usedforsecurity=False
+        ).hexdigest()
+
+        # Writes the file to the database
+        with open(f"db/files/{hash}", "wb") as f:
+            f.write(file.file.read())
+
+    # Either way, we should return a response with the file's content type and the files name for debugging purposes.
+    return {"type": file.content_type, "name": file.filename}
+
+
+@app.get("/download-file")
+def download_file(filename: str) -> FileResponse:
+    """Downloads a file. Requires a filename that has been uploaded previously."""
+
+    # Hash the filename to retrieve the correct path
+    hash = hashlib.sha256(
+        filename.encode(errors="ignore"), usedforsecurity=False
+    ).hexdigest()
+    # Construct the path
+    path = Path(f"db/files/{hash}")
+    # If the file doesn't exist, return an error
+    if not path.exists():
+        raise HTTPException(404, detail="That file does not exist.")
+    # Otherwise, return the file asyncronously
+    return FileResponse(path, filename=filename, content_disposition_type="inline")
