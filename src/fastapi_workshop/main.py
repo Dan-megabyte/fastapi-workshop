@@ -9,7 +9,39 @@ from starlette.responses import FileResponse
 
 from fastapi_workshop.card_data_helper import Card, cards, cards_dict
 
-app = FastAPI()
+
+description = """
+This is the list of fucntions that we will be showing off. It uses markdown to render the text so anything you can do in markdown you can do here. 
+
+##Treasure 
+* **Lay Treasure** (_not immplemented_)
+* **search for treasure** - gives how far awy from treasure
+
+## Cards
+* **all cards** - gets all the cards.
+* **cards**  - gets a certain card
+* **random card** (_not immplemented_)
+
+## File
+* **upload file**  - Lets you upload a file
+* **download file** - Lets you download a file
+* **delete file** - Lets you delete a file
+
+
+"""
+
+app = FastAPI(
+    title="FastAPI Workshop",
+    description=description,
+    summary="The fuctions that are bing implemented or are already implemented",
+    version="0.0.1",
+    terms_of_service="http://example.com/terms/",
+     license_info={
+        "name": "MIT License",
+        "url": "https://opensource.org/license/mit",
+    },
+
+)
 
 
 @app.get("/")
