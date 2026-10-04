@@ -3,8 +3,8 @@ import os
 from math import sqrt
 from pathlib import Path
 
-from pydantic import BaseModel
 from fastapi import FastAPI, HTTPException, UploadFile
+from pydantic import BaseModel
 from starlette.responses import FileResponse
 
 from fastapi_workshop.card_data_helper import Card, cards, cards_dict
