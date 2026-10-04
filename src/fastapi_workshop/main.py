@@ -9,18 +9,17 @@ from starlette.responses import FileResponse
 
 from fastapi_workshop.card_data_helper import Card, cards, cards_dict
 
-
 description = """
-This is the list of fucntions that we will be showing off. It uses markdown to render the text so anything you can do in markdown you can do here. 
+This is the list of fucntions that we will be showing off. It uses markdown to render the text so anything you can do in markdown you can do here.
 
-## Treasure 
+## Treasure
 * **Lay Treasure** (_not immplemented_)
-* **search for treasure** - gives how far awy from treasure
+* **search for treasure** - gives how far away from treasure
 
 ## Cards
 * **all cards** - gets all the cards.
-* **cards**  - gets a certain card
-* **random card** (_not immplemented_)
+* **cards**  - gets a specified card
+* **random card** (_not implemented_)
 
 ## File
 * **upload file**  - Lets you upload a file
@@ -33,7 +32,7 @@ This is the list of fucntions that we will be showing off. It uses markdown to r
 app = FastAPI(
     title="FastAPI Workshop",
     description=description,
-    summary="The fuctions that are bing implemented or are already implemented",
+    summary="The fuctions that are being implemented or are already implemented",
     version="0.0.1",
     terms_of_service="http://example.com/terms/",
      license_info={
