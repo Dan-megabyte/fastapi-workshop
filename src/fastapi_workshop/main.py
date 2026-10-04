@@ -51,7 +51,7 @@ def hello_world() -> str:
 
 
 def distance(loc_1: tuple[int, int], loc_2: tuple[int, int]) -> float:
-    return sqrt((loc_1[0] - loc_2[0]) ** 2 + (loc_1[0] - loc_2[0]) ** 2)
+    return sqrt((loc_1[0] - loc_2[0]) ** 2 + (loc_1[1] - loc_2[1]) ** 2)
 
 
 SECRET_LOCATION = (1, 5)
