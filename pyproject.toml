@@ -15,6 +15,9 @@ dependencies = [
 [project.scripts]
 fastapi-workshop = "fastapi_workshop:main"
 
+[tool.fastapi]
+entrypoint = "src.fastapi_workshop.main:app"
+
 [build-system]
 requires = ["uv_build>=0.12.19,<0.13.0"]
 build-backend = "uv_build"
