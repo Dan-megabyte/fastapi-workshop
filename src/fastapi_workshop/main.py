@@ -14,7 +14,7 @@ This is the list of fucntions that we will be showing off.
 It uses markdown to render the text so anything you can do in markdown you can do here.
 
 ## Treasure
-* **Lay Treasure** (_not immplemented_)
+* **Lay Treasure** (_not implemented_)
 * **search for treasure** - gives how far away from treasure
 
 ## Cards
