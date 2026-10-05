@@ -10,7 +10,7 @@ from starlette.responses import FileResponse
 from fastapi_workshop.card_data_helper import Card, cards, cards_dict
 
 description = """
-This is the list of fucntions that we will be showing off.
+This is the list of functions that we will be showing off.
 It uses markdown to render the text so anything you can do in markdown you can do here.
 
 ## Treasure
