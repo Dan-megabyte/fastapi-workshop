@@ -14,13 +14,13 @@ This is the list of functions that we will be showing off.
 It uses markdown to render the text so anything you can do in markdown you can do here.
 
 ## Treasure
-* **Lay Treasure** (_not implemented_)
+* **Lay Treasure** - (_not implemented_)
 * **search for treasure** - gives how far away from treasure
 
 ## Cards
 * **all cards** - gets all the cards.
 * **cards**  - gets a specified card
-* **random card** (_not implemented_)
+* **random card** - (_not implemented_)
 
 ## File
 * **upload file**  - Lets you upload a file
