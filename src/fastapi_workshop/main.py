@@ -67,7 +67,6 @@ def hello_world() -> str:
 def distance(loc_1: tuple[int, int], loc_2: tuple[int, int]) -> float:
     return sqrt((loc_1[0] - loc_2[0]) ** 2 + (loc_1[1] - loc_2[1]) ** 2)
 
-
 SECRET_LOCATION = (1, 5)
 
 
@@ -95,6 +94,10 @@ def search_for_treasure(x: int, y: int) -> TreasureResult:
     else:
         return TreasureResult(distance_away=distance(given_location, SECRET_LOCATION))
 
+@app.post("/lay-treasure")
+def lay_treasure(x: int, y: int):
+    global SECRET_LOCATION
+    SECRET_LOCATION = (x, y)
 
 @app.get("/all-cards", tags=["Cards"])
 def get_all_cards() -> list[Card]:
