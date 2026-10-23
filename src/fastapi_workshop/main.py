@@ -189,3 +189,14 @@ def delete_file(filename: str) -> bool:
 
     os.remove(path)
     return True
+
+@app.put("/process-file")
+def process_file(file: UploadFile) -> bool:
+    if file.filename is None:
+        return False
+
+    hash = hashlib.sha256(
+        file.filename.encode(errors="ignore"), usedforsecurity=False
+    ).digest()
+
+    return (hash.hex()[0] == "4")
