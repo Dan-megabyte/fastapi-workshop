@@ -2,6 +2,7 @@ import hashlib
 import os
 from math import sqrt
 from pathlib import Path
+from random import choice
 
 from fastapi import FastAPI, HTTPException, UploadFile
 from pydantic import BaseModel
@@ -114,6 +115,12 @@ def get_card(card_name: str) -> Card:
     """Gets a single card from the card dictionary. Fast."""
     return cards_dict[card_name]
 
+@app.get("/random-deck")
+def random_deck() -> list[str]:
+    to_return = []
+    for i in range(60):
+        to_return.append(choice(cards).name)
+    return to_return
 
 class UploadFileResponse(BaseModel):
     type: str | None
